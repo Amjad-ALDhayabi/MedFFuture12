@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribe Page</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href='https://use.fontawesome.com/releases/v5.2.0/css/all.css'>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(90deg, #C7C5F4, #776BCC);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .screen {
+      background: #fff;
+      border-radius: 15px;
+      width: 400px; /* توسيع عرض الحاوية */
+      padding: 40px; /* إضافة تباعد داخلي */
+      box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.12);
+      position: relative;
+    }
+
+    .screen__content {
+      z-index: 1;
+      position: relative;
+    }
+
+    .login__field {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .login__icon {
+      position: absolute;
+      top: 50%;
+      left: 10px; /* إبعاد الأيقونات عن الحافة */
+      transform: translateY(-50%);
+      color: #6c63ff;
+      font-size: 18px; /* تكبير الأيقونة قليلاً */
+    }
+
+    .login__input {
+      width: 100%;
+      padding: 15px 15px 15px 40px; /* إضافة تباعد للأيقونات */
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: #f7f7f7;
+      outline: none;
+    }
+
+    .login__input:focus {
+      border-color: #6c63ff;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .button {
+      width: 100%;
+      padding: 15px;
+      background-color: #6c63ff;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .button:hover {
+      background-color: #594baf;
+    }
+
+    .button__icon {
+      margin-left: 10px;
+    }
+
+    .screen__background__shape {
+      position: absolute;
+      z-index: -1;
+    }
+
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="screen">
+    <div class="screen__content">
+      <form class="subscribe" id="subscribeForm" onsubmit="return validateCardDetails()">
+        <!-- Card Number -->
+        <div class="login__field">
+          <i class="login__icon fas fa-credit-card"></i>
+          <input type="text" class="login__input" id="cardNumber" placeholder="Card Number" maxlength="16" required>
+          <p id="card-error" class="error-message"></p>
+        </div>
+
+        <!-- CVV -->
+        <div class="login__field">
+          <i class="login__icon fas fa-lock"></i>
+          <input type="text" class="login__input" id="cvv" placeholder="CVV" maxlength="3" required>
+          <p id="cvv-error" class="error-message"></p>
+        </div>
+
+        <!-- Expiry Date -->
+        <div class="login__field">
+          <i class="login__icon fas fa-calendar-alt"></i>
+          <input type="text" class="login__input" id="expiry" placeholder="MM/YY" required>
+          <p id="expiry-error" class="error-message"></p>
+        </div>
+
+        <button class="button login__submit">
+          Subscribe
+          <i class="button__icon fas fa-chevron-right"></i>
+        </button>     
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Validation Script -->
+<script>
+  function validateCardDetails() {
+    const cardNumber = document.getElementById('cardNumber').value;
+    const cvv = document.getElementById('cvv').value;
+    const expiry = document.getElementById('expiry').value;
+
+    const cardError = document.getElementById('card-error');
+    const cvvError = document.getElementById('cvv-error');
+    const expiryError = document.getElementById('expiry-error');
+
+    let valid = true;
+
+    // Validate card number (16 digits, all numbers)
+    const cardPattern = /^\d{16}$/;
+    if (!cardPattern.test(cardNumber)) {
+      cardError.textContent = "Please enter a valid 16-digit card number.";
+      valid = false;
+    } else {
+      cardError.textContent = "";
+    }
+
+    // Validate CVV (3 digits, all numbers)
+    const cvvPattern = /^\d{3}$/;
+    if (!cvvPattern.test(cvv)) {
+      cvvError.textContent = "Please enter a valid 3-digit CVV.";
+      valid = false;
+    } else {
+      cvvError.textContent = "";
+    }
+
+    // Validate expiry date (MM/YY format)
+    const expiryPattern = /^(0[1-9]|1[0-2])\/\d{2}$/;
+    if (!expiryPattern.test(expiry)) {
+      expiryError.textContent = "Please enter a valid expiry date (MM/YY).";
+      valid = false;
+    } else {
+      const [month, year] = expiry.split('/');
+      const currentYear = new Date().getFullYear() % 100; // Get last two digits of current year
+      const currentMonth = new Date().getMonth() + 1; // Months are 0-based, so we add 1
+
+      if (parseInt(year) < currentYear || (parseInt(year) === currentYear && parseInt(month) < currentMonth)) {
+        expiryError.textContent = "The card is expired.";
+        valid = false;
+      } else {
+        expiryError.textContent = "";
+      }
+    }
+
+    return valid;
+  }
+</script>
+</body>
+</html>
